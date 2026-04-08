@@ -1,0 +1,54 @@
+.splash-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#enotice-logo {
+    width: 100%;
+    max-width: 550px;
+    height: auto;
+    overflow: visible;
+}
+
+.envelope-back, .paper-insert, .lightning-bolt, .envelope-flaps, .stylized-e {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+}
+
+.text-enotice, .text-subtitle {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.animate-draw .envelope-back { animation: drawPath 1.5s ease-in-out forwards; }
+.animate-draw .envelope-flaps { animation: drawPath 1.5s ease-in-out 0.2s forwards; }
+.animate-draw .stylized-e { animation: drawPath 1.5s ease-in-out 0.4s forwards; }
+.animate-draw .paper-insert {
+    animation: drawPath 0.5s ease-out 0.8s forwards, slidePaper 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1s forwards;
+    transform: translateY(20px);
+}
+.animate-draw .lightning-bolt {
+    animation: drawPath 0.8s ease-in-out 1.5s forwards, pulseGlow 2s infinite alternate 2.3s;
+}
+
+.animate-text .text-enotice { animation: fadeSlideIn 0.8s ease-out 1.8s forwards; }
+.animate-text .text-subtitle { animation: fadeSlideIn 0.8s ease-out 2.1s forwards; }
+
+@keyframes drawPath { to { stroke-dashoffset: 0; } }
+@keyframes slidePaper { to { transform: translateY(-25px); } }
+@keyframes pulseGlow {
+    0% { filter: drop-shadow(0 0 2px #0275B1); }
+    100% { filter: drop-shadow(0 0 10px #06A5FF); stroke-width: 6; }
+}
+@keyframes fadeSlideIn { to { opacity: 1; transform: translateX(0); } }
+
+.fade-out {
+    animation: fadeOutPage 0.8s ease-in-out forwards;
+}
+@keyframes fadeOutPage {
+    to { opacity: 0; transform: scale(1.05); }
+}

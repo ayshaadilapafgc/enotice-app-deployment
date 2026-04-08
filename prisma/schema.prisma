@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  regNo         String   @unique
+  fullName      String
+  password      String
+  role          String   @default("STUDENT") // "STUDENT" | "TEACHER" | "ADMIN"
+  isVerified    Boolean  @default(false)
+  subjectTaught String?  // Only populated if role === TEACHER
+  phone         String?
+  location      String?
+  enrollmentYear String?
+  currentSemester String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  notices         Notice[]
+  marks           Mark[]
+  placements      PlacementDrive[]
+  questionPapers  QuestionPaper[]
+  
+  // To allow mapping a specific teacher to a mark (Optional but good practice)
+  marksGiven Mark[] @relation("TeacherMarks")
+  
+  // Attendance relationships
+  attendance      AttendanceSummary[]
+  attendanceGiven AttendanceSummary[] @relation("TeacherAttendance")
+}
+
+model Notice {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Mark {
+  id        String   @id @default(cuid())
+  subject   String
+  score     Int
+  maxScore  Int
+  
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id])
+  
+  teacherId String?
+  teacher   User?    @relation("TeacherMarks", fields: [teacherId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model PlacementDrive {
+  id           String   @id @default(cuid())
+  company      String
+  description  String
+  eligibility  String
+  date         DateTime
+  link         String?
+  adminId      String
+  admin        User     @relation(fields: [adminId], references: [id])
+}
+
+model QuestionPaper {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  subject   String
+  
+  teacherId String
+  teacher   User     @relation(fields: [teacherId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model AttendanceSummary {
+  id             String   @id @default(cuid())
+  subject        String
+  attendedClasses Int
+  totalClasses    Int
+  
+  studentId      String
+  student        User     @relation(fields: [studentId], references: [id])
+  
+  teacherId      String
+  teacher        User     @relation("TeacherAttendance", fields: [teacherId], references: [id])
+  
+  updatedAt      DateTime @updatedAt
+  
+  @@unique([studentId, teacherId]) // One summary per student-teacher pairing
+}
