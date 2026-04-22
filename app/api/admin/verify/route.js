@@ -24,9 +24,16 @@ export async function POST(req) {
             });
             return NextResponse.json({ message: 'User verified successfully' });
         } else if (action === 'REJECT' || action === 'REVOKE') {
-            await prisma.user.delete({
-                where: { id: userId }
-            });
+            await prisma.$transaction([
+                prisma.notice.deleteMany({ where: { authorId: userId } }),
+                prisma.mark.deleteMany({ where: { studentId: userId } }),
+                prisma.mark.deleteMany({ where: { teacherId: userId } }),
+                prisma.placementDrive.deleteMany({ where: { adminId: userId } }),
+                prisma.questionPaper.deleteMany({ where: { teacherId: userId } }),
+                prisma.attendanceSummary.deleteMany({ where: { studentId: userId } }),
+                prisma.attendanceSummary.deleteMany({ where: { teacherId: userId } }),
+                prisma.user.delete({ where: { id: userId } })
+            ]);
             return NextResponse.json({ message: 'User deleted securely.' });
         }
 

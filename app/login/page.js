@@ -103,7 +103,7 @@ export default function LoginPage() {
                         {loading ? "Verifying..." : `Login as ${role.charAt(0) + role.slice(1).toLowerCase()}`}
                     </button>
                     <div className="form-footer">
-                        <Link href="#">Forgot your password?</Link> 
+                        <Link href="/forgot-password">Forgot your password?</Link> 
                         <span style={{ margin: "0 10px", color: "#cbd5e1" }}>|</span> 
                         <Link href="/register">Create an Account</Link>
                     </div>
