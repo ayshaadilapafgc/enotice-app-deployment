@@ -98,3 +98,17 @@ model AttendanceSummary {
   
   @@unique([studentId, teacherId]) // One summary per student-teacher pairing
 }
+
+model PasswordResetRequest {
+  id        String   @id @default(cuid())
+  regNo     String
+  fullName  String
+  reason    String
+  details   String?
+  status    String   @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([regNo])
+}
+
