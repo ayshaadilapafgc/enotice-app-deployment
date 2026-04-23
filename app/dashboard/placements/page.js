@@ -64,7 +64,21 @@ export default function PlacementsPage() {
                             </div>
 
                             <div className="card-footer">
-                                <button className="btn-primary">Apply Now <ChevronRight size={16}/></button>
+                                {drive.link ? (
+                                    <a 
+                                        href={drive.link.startsWith('http') ? drive.link : `https://${drive.link}`} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="btn-primary"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        Apply Now <ChevronRight size={16}/>
+                                    </a>
+                                ) : (
+                                    <button className="btn-primary" disabled title="No link provided">
+                                        No Link Provided
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))

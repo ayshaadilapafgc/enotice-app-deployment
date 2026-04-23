@@ -104,7 +104,18 @@ export default function AdminPlacements() {
                                     <h4>{p.company}</h4>
                                     <p>{p.description} <br/> <strong>Eligibility:</strong> {p.eligibility}</p>
                                     <small>Date: {new Date(p.date).toLocaleDateString()}</small>
-                                    {p.link && <div style={{marginTop: '8px'}}><a href={p.link} target="_blank" rel="noopener noreferrer" style={{color: '#3b82f6', textDecoration: 'underline'}}>Placement Web Link</a></div>}
+                                    {p.link && (
+                                        <div style={{marginTop: '8px'}}>
+                                            <a 
+                                                href={p.link.startsWith('http') ? p.link : `https://${p.link}`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                style={{color: '#3b82f6', textDecoration: 'underline'}}
+                                            >
+                                                Placement Web Link
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                                 <button className="delete-btn" onClick={() => handleDelete(p.id)}><Trash2 size={18}/></button>
                             </div>
