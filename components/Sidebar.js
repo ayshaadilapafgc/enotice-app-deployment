@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { LayoutDashboard, FileText, GraduationCap, Briefcase, BarChart3, Wrench, Settings, User, Users, Database } from 'lucide-react';
+import { LayoutDashboard, FileText, GraduationCap, Briefcase, BarChart3, Wrench, Settings, User, Users, Database, Lock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Sidebar({ userRole }) {
@@ -26,6 +26,7 @@ export default function Sidebar({ userRole }) {
         { label: 'Platform Overview', icon: LayoutDashboard, href: '/dashboard' },
         { label: 'Manage Placements', icon: Briefcase, href: '/dashboard/admin/placements' },
         { label: 'Manage Notices', icon: FileText, href: '/dashboard/admin/notices' },
+        { label: 'Password Requests', icon: Lock, href: '/dashboard/admin/password-requests' },
     ];
 
     let activeNav = studentNav;
@@ -70,6 +71,9 @@ export default function Sidebar({ userRole }) {
                         <div className="sub-nav">
                             <Link href="/dashboard/admin/users" className="nav-item sub-item">
                                 <Users size={16} className="nav-icon" /> User Management
+                            </Link>
+                            <Link href="/dashboard/admin/password-requests" className="nav-item sub-item">
+                                <Lock size={16} className="nav-icon" /> Password Resets
                             </Link>
                             <Link href="/dashboard/admin/database" className="nav-item sub-item">
                                 <Database size={16} className="nav-icon" /> Database Maintenance

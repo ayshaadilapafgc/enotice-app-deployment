@@ -66,105 +66,123 @@ export default function AdminPasswordRequests() {
         }
     };
 
+
     return (
-        <div style={{ padding: '24px', background: '#f8fafc', minHeight: 'calc(100vh - 64px)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div className="admin-container animated-fade-in">
+            <div className="page-header">
                 <div>
-                    <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1e293b' }}>Password Reset Requests</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Review and manage user password reset requests.</p>
+                    <h1 className="page-title">Password Recovery Portal</h1>
+                    <p className="page-subtitle">Review and approve user password reset requests.</p>
                 </div>
-                <div style={{ position: 'relative' }}>
-                    <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={18} />
+                <div className="search-bar">
+                    <Search size={16} className="search-icon" />
                     <input 
                         type="text" 
                         placeholder="Search by ID or Name..." 
-                        style={{ padding: '10px 12px 10px 40px', borderRadius: '8px', border: '1px solid #e2e8f0', width: '300px', outline: 'none' }}
+                        className="search-input"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
             </div>
 
-            {loading ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>Loading requests...</div>
-            ) : filteredRequests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '60px', background: 'white', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
-                    <AlertCircle size={48} style={{ color: '#94a3b8', marginBottom: '16px' }} />
-                    <p style={{ color: '#64748b' }}>No password reset requests found.</p>
+            <div className="users-list-card mb-8">
+                <div className="card-top">
+                    <h2>Pending Reset Requests</h2>
                 </div>
-            ) : (
-                <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead style={{ background: '#f1f5f9', borderBottom: '1px solid #e2e8f0' }}>
+                {loading ? (
+                    <div className="loading-state">Scanning recovery queue...</div>
+                ) : filteredRequests.length === 0 ? (
+                    <div className="empty-state">
+                        <Check size={48} color="#10b981" />
+                        <h3>Recovery Queue Clear</h3>
+                        <p>No pending password reset requests found.</p>
+                    </div>
+                ) : (
+                    <table className="admin-table">
+                        <thead>
                             <tr>
-                                <th style={{ textAlign: 'left', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>User Details</th>
-                                <th style={{ textAlign: 'left', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>Reason</th>
-                                <th style={{ textAlign: 'left', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>Additional Info</th>
-                                <th style={{ textAlign: 'left', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>Date</th>
-                                <th style={{ textAlign: 'left', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>Status</th>
-                                <th style={{ textAlign: 'center', padding: '16px', color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>Actions</th>
+                                <th>User Details</th>
+                                <th>Reason</th>
+                                <th>Additional Info</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredRequests.map((req) => (
-                                <tr key={req.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }}>
-                                    <td style={{ padding: '16px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eff6ff', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#2563eb' }}>
-                                                <User size={20} />
-                                            </div>
-                                            <div>
-                                                <div style={{ fontWeight: '600', color: '#1e293b' }}>{req.fullName}</div>
-                                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>ID: {req.regNo}</div>
-                                            </div>
-                                        </div>
+                                <tr key={req.id}>
+                                    <td className="user-name">
+                                        {req.fullName} <br/>
+                                        <small className="text-muted">ID: {req.regNo}</small>
                                     </td>
-                                    <td style={{ padding: '16px' }}>
-                                        <div style={{ textTransform: 'capitalize', color: '#334155', fontWeight: '500' }}>{req.reason}</div>
+                                    <td>
+                                        <span className="subject-tag" style={{ textTransform: 'capitalize' }}>{req.reason}</span>
                                     </td>
-                                    <td style={{ padding: '16px' }}>
+                                    <td>
                                         <div style={{ maxWidth: '200px', fontSize: '0.85rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={req.details}>
                                             {req.details || "—"}
                                         </div>
                                     </td>
-                                    <td style={{ padding: '16px' }}>
-                                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                                            {new Date(req.createdAt).toLocaleDateString()}
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '16px' }}>
-                                        {getStatusBadge(req.status)}
-                                    </td>
-                                    <td style={{ padding: '16px' }}>
+                                    <td><small>{new Date(req.createdAt).toLocaleDateString()}</small></td>
+                                    <td>{getStatusBadge(req.status)}</td>
+                                    <td className="action-buttons">
                                         {req.status === 'PENDING' ? (
-                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                                                <button 
-                                                    onClick={() => handleAction(req.id, 'APPROVED')}
-                                                    disabled={actionLoading === req.id}
-                                                    style={{ padding: '6px', borderRadius: '6px', border: '1px solid #dcfce7', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}
-                                                    title="Approve"
-                                                >
-                                                    <Check size={18} />
+                                            <>
+                                                <button className="accept-btn" onClick={() => handleAction(req.id, 'APPROVED')} disabled={actionLoading === req.id}>
+                                                    <Check size={16} /> Approve
                                                 </button>
-                                                <button 
-                                                    onClick={() => handleAction(req.id, 'REJECTED')}
-                                                    disabled={actionLoading === req.id}
-                                                    style={{ padding: '6px', borderRadius: '6px', border: '1px solid #fee2e2', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
-                                                    title="Reject"
-                                                >
-                                                    <X size={18} />
+                                                <button className="reject-btn" onClick={() => handleAction(req.id, 'REJECTED')} disabled={actionLoading === req.id}>
+                                                    <X size={16} /> Reject
                                                 </button>
-                                            </div>
+                                            </>
                                         ) : (
-                                            <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.8rem' }}>Processed</div>
+                                            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Processed</span>
                                         )}
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                </div>
-            )}
+                )}
+            </div>
+
+            <style jsx>{`
+                .animated-fade-in { animation: fadeIn 0.4s ease forwards; }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+                .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; }
+                .page-title { font-size: 1.8rem; font-weight: 800; color: var(--dark-blue); margin: 0; }
+                .page-subtitle { color: #64748b; margin: 4px 0 0 0; font-size: 0.95rem; }
+
+                .search-bar { background: #f8fafc; display: flex; align-items: center; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; width: 300px; }
+                .search-icon { color: #94a3b8; margin-right: 8px; }
+                .search-input { border: none; background: transparent; outline: none; width: 100%; font-size: 0.85rem; }
+
+                .users-list-card { background: white; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+                .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+                .card-top h2 { margin: 0; color: #0f172a; font-size: 1.2rem; }
+                
+                .loading-state, .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 180px; color: #64748b; text-align: center; }
+                .empty-state h3 { margin: 15px 0 5px 0; color: #0f172a; font-size: 1.1rem; }
+                
+                .admin-table { width: 100%; border-collapse: collapse; }
+                .admin-table th { text-align: left; padding: 12px 16px; background: #f8fafc; font-size: 0.8rem; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+                .admin-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+                
+                .user-name { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
+                .text-muted { color: #64748b; font-weight: normal; }
+                
+                .subject-tag { background: #fef08a; color: #854d0e; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+
+                .action-buttons { display: flex; gap: 10px; }
+                .accept-btn { background: #16a34a; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; font-size: 0.8rem; }
+                .accept-btn:hover { background: #15803d; }
+                .reject-btn { background: white; border: 1px solid #ef4444; color: #ef4444; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; font-size: 0.8rem; }
+                .reject-btn:hover { background: #fef2f2; }
+                button:disabled { opacity: 0.6; cursor: not-allowed; }
+            `}</style>
         </div>
     );
 }
