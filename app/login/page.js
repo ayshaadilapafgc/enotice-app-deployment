@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, BookOpen, Shield } from 'lucide-react';
+import { User, BookOpen, Shield, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -89,15 +90,24 @@ export default function LoginPage() {
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            className="form-control" 
-                            placeholder="Enter password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required 
-                        />
+                        <div className="password-input-wrapper">
+                            <input 
+                                type={showPassword ? "text" : "password"} 
+                                id="password" 
+                                className="form-control" 
+                                placeholder="Enter password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required 
+                            />
+                            <button 
+                                type="button" 
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" className="btn-primary" disabled={loading}>
                         {loading ? "Verifying..." : `Login as ${role.charAt(0) + role.slice(1).toLowerCase()}`}
@@ -142,6 +152,27 @@ export default function LoginPage() {
                     color: var(--accent-blue);
                     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
                     transform: scale(1.02);
+                }
+                .password-input-wrapper {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                }
+                .password-toggle {
+                    position: absolute;
+                    right: 12px;
+                    background: none;
+                    border: none;
+                    color: #64748b;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                    transition: color 0.2s;
+                }
+                .password-toggle:hover {
+                    color: var(--accent-blue);
                 }
             `}</style>
         </main>

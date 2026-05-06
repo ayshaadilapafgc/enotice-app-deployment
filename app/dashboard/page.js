@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Megaphone, Award, Briefcase } from 'lucide-react';
+import { Megaphone, Award, Briefcase, Users, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
@@ -10,24 +10,38 @@ export default function Dashboard() {
     const [eventsData, setEventsData] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
     const [materialsData, setMaterialsData] = useState([]);
+    const [user, setUser] = useState(null);
+    const [teacherStats, setTeacherStats] = useState(null);
     const [stats, setStats] = useState({ notices: 0 });
     
     useEffect(() => {
         setMounted(true);
-        fetch('/api/student/marks').then(res => res.json()).then(data => {
-            if(data.marks) setMarksData(data.marks);
-        }).catch(e => console.error(e));
+        
+        fetch('/api/auth/me').then(res => res.json()).then(data => {
+            if (data.user) {
+                setUser(data.user);
+                if (data.user.role === 'TEACHER') {
+                    fetch('/api/teacher/stats').then(res => res.json()).then(sData => {
+                        if (sData.stats) setTeacherStats(sData.stats);
+                    });
+                } else if (data.user.role === 'STUDENT') {
+                    fetch('/api/student/marks').then(res => res.json()).then(data => {
+                        if(data.marks) setMarksData(data.marks);
+                    }).catch(e => console.error(e));
+
+                    fetch('/api/student/academic').then(res => res.json()).then(data => {
+                        if(data.attendance) setAttendanceData(data.attendance);
+                        if(data.materials) setMaterialsData(data.materials);
+                    }).catch(e => console.error(e));
+                }
+            }
+        });
 
         fetch('/api/admin/notices').then(res => res.json()).then(data => {
             if(data.notices) {
                 setEventsData(data.notices.slice(0, 4)); 
                 setStats(prev => ({ ...prev, notices: data.notices.length }));
             }
-        }).catch(e => console.error(e));
-
-        fetch('/api/student/academic').then(res => res.json()).then(data => {
-            if(data.attendance) setAttendanceData(data.attendance);
-            if(data.materials) setMaterialsData(data.materials);
         }).catch(e => console.error(e));
     }, []);
 
@@ -50,34 +64,50 @@ export default function Dashboard() {
                 {/* Top Row: Overview & Events */}
                 <div className="top-row">
                     <section className="overview-panel dashboard-card">
-                        <h2 className="panel-title">Campus eNotice Overview</h2>
+                        <h2 className="panel-title">{user?.role === 'TEACHER' ? 'Teacher Portal Overview' : 'Campus eNotice Overview'}</h2>
                         <div className="metrics-grid">
                             <div className="metric-box">
-                                <h3>Campus Notices</h3>
+                                <h3>{user?.role === 'TEACHER' ? 'Active Students' : 'Campus Notices'}</h3>
                                 <div className="metric-content">
-                                    <div className="icon-wrapper bg-blue"><Megaphone size={24} color="white" /></div>
+                                    <div className="icon-wrapper bg-blue">{user?.role === 'TEACHER' ? <Users size={24} color="white" /> : <Megaphone size={24} color="white" />}</div>
                                     <div className="metric-text">
-                                        <p>Total: <strong>{stats.notices}</strong></p>
-                                        <p>Live alerts</p>
+                                        <p>{user?.role === 'TEACHER' ? 'Total Enrolled' : 'Total Notices'}: <strong>{user?.role === 'TEACHER' ? teacherStats?.students : stats.notices}</strong></p>
+                                        <p>{user?.role === 'TEACHER' ? 'Verified records' : 'Live alerts'}</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="metric-box">
-                                <h3>Academic Records</h3>
+                                <h3>{user?.role === 'TEACHER' ? 'Grading Progress' : 'Academic Records'}</h3>
                                 <div className="metric-content">
                                     <div className="icon-wrapper bg-gray"><Award size={24} color="white" /></div>
                                     <div className="metric-text">
-                                        <p className="large-stat">{overallAttendance}</p>
-                                        <p>Avg Attendance</p>
+                                        {user?.role === 'TEACHER' ? (
+                                            <>
+                                                <p>Marks Uploaded: <strong>{teacherStats?.marksUploaded}</strong></p>
+                                                <p>Across all subjects</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p className="large-stat">{overallAttendance}</p>
+                                                <p>Avg Attendance</p>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="metric-box">
-                                <h3>Placement Drives</h3>
+                                <h3>{user?.role === 'TEACHER' ? 'Class Resources' : 'Placement Drives'}</h3>
                                 <div className="metric-content">
-                                    <div className="icon-wrapper bg-dark-blue"><Briefcase size={24} color="white" /></div>
+                                    <div className="icon-wrapper bg-dark-blue">{user?.role === 'TEACHER' ? <FileText size={24} color="white" /> : <Briefcase size={24} color="white" />}</div>
                                     <div className="metric-text">
-                                        <p>Open Drives: <strong>Live</strong></p>
+                                        {user?.role === 'TEACHER' ? (
+                                            <>
+                                                <p>Materials: <strong>{teacherStats?.materialsUploaded}</strong></p>
+                                                <p>Notes & Papers</p>
+                                            </>
+                                        ) : (
+                                            <p>Open Drives: <strong>Live</strong></p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

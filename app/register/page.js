@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -14,6 +15,7 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -108,15 +110,25 @@ export default function RegisterPage() {
 
                     <div className="form-group">
                         <label htmlFor="password">Secure Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            className="form-control" 
-                            placeholder="Choose a strong password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required 
-                        />
+                        <div className="password-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <input 
+                                type={showPassword ? "text" : "password"} 
+                                id="password" 
+                                className="form-control" 
+                                placeholder="Choose a strong password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required 
+                            />
+                            <button 
+                                type="button" 
+                                className="password-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                                style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" className="btn-primary" disabled={loading}>
                         {loading ? "Submitting Request..." : "Request Account Creation"}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { LayoutDashboard, FileText, GraduationCap, Briefcase, BarChart3, Wrench, Settings, User, Users, Database, Lock } from 'lucide-react';
+import { LayoutDashboard, FileText, GraduationCap, Briefcase, BarChart3, Wrench, Settings, User, Users, Database, Lock, CheckCircle, Award } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Sidebar({ userRole }) {
@@ -18,6 +18,8 @@ export default function Sidebar({ userRole }) {
     const teacherNav = [
         { label: 'Teacher Overview', icon: LayoutDashboard, href: '/dashboard' },
         { label: 'My Students', icon: Users, href: '/dashboard/teacher/students' },
+        { label: 'Bulk Attendance', icon: CheckCircle, href: '/dashboard/teacher/attendance' },
+        { label: 'Bulk Marks', icon: Award, href: '/dashboard/teacher/marks' },
         { label: 'Class Materials', icon: FileText, href: '/dashboard/teacher/materials' },
         { label: 'Institution Notices', icon: FileText, href: '/dashboard/notices' },
     ];
